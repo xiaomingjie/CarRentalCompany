@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Login</title>
+</head>
+<body>
+    <div>
+        <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+        <form action="/CarRentalCompany/login" method="post">
+            userId:<input name="userId" type="text"/><br>
+            pwd:<input name="password" type="password"> <br>
+            <input type="button" value="Back" onclick="location.href='/CarRentalCompany/main'">
+            <input type="submit" value="Login">
+        </form>
+        <p style="color: red" th:text="reinput" th:if="${param.error}" ></p>
+    </div>
+</body>
+</html>

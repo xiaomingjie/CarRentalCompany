@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>CarRentalCompany</title>
+</head>
+<body>
+<div sec:authorize="!isAuthenticated()">
+    <p style="color: red" th:text="last user has logged out" th:if="${param.logout}" ></p>
+    <p>Register or Login</p>
+    <input type="button" value="Register" onclick="location.href='/CarRentalCompany/register'">
+    <input type="button" value="Login" onclick="location.href='/CarRentalCompany/login'">
+</div>
+<div sec:authorize="isAuthenticated()">
+    <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+    <p th:text="|Hello ${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}|"></p>
+    <input type="button" value="logout" onclick="location.href='/CarRentalCompany/logout'">
+</div>
+<div>
+    <h2>Current Car Stock</h2>
+    <div>
+        <table th:if="${carStockQueryStatus}" style="text-decoration: none;text-align:center">
+            <tr>
+                <th>Car model</th>
+                <th>In stock</th>
+            </tr>
+            <tr th:each="carStock:${carStockData}">
+                <td th:text="${carStock.carModel}"></td>
+                <td th:text="${carStock.inStock}"></td>
+                <td sec:authorize="isAuthenticated()">
+                    <form action="#" th:action="@{/rentCar}" method="post" onsubmit="submit.disabled=1">
+                        <input type="hidden" th:name="carModel" th:value="${carStock.carModel}">
+                        <input type="hidden" th:name="userId" th:value="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}">
+                        <input type="submit" value="rent">
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div sec:authorize="isAuthenticated()">
+    <div>
+        <h2>Your Rent Status</h2>
+        <div>
+            <table th:if="${currentRentQueryStatus}" style="text-decoration: none;text-align:center">
+                <tr>
+                    <th>ID</th>
+                    <th>Car model</th>
+                    <th>Date</th>
+                </tr>
+                <tr th:each="carRent:${currentRentData}">
+                    <td th:text="${carRent.id}"></td>
+                    <td th:text="${carRent.carModel}"></td>
+                    <td th:text="${carRent.date}"></td>
+                    <td>
+                        <form action="#" th:action="@{/returnCar}" method="post" onsubmit="submit.disabled=1">
+                            <input type="hidden" th:name="id" th:value="${carRent.id}">
+                            <input type="hidden" th:name="carModel" th:value="${carRent.carModel}">
+                            <input type="hidden" th:name="userId" th:value="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}">
+                            <input type="submit" value="return">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div>
+        <h2>Your Rent History</h2>
+        <div>
+            <table th:if="${rentHistoryQueryStatus}" style="text-decoration: none;text-align:center">
+                <tr>
+                    <th>ID</th>
+                    <th>UserId</th>
+                    <th>Car model</th>
+                    <th>Date</th>
+                    <th>Operation</th>
+                </tr>
+                <tr th:each="rentHistory:${rentHistoryData}">
+                    <td th:text="${rentHistory.id}"></td>
+                    <td th:text="${rentHistory.userId}"></td>
+                    <td th:text="${rentHistory.carModel}"></td>
+                    <td th:text="${rentHistory.date}"></td>
+                    <td th:text="${rentHistory.operation}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
